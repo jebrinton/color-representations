@@ -3,6 +3,7 @@
 
 This is the base stucture of the steering vectors:
 
+```
 steering_vectors/
 ├── synthetic/
 │   ├── gemma/
@@ -21,3 +22,4 @@ steering_vectors/
         └── red/
             ├── 16.pt
             └── 16.json
+```
