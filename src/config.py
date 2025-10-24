@@ -1,0 +1,1 @@
+STEERING_VECTORS_DIR = "/projectnb/cs599m1/projects/color-representations/data/steering_vectors"
