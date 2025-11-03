@@ -1,0 +1,13 @@
+# Base configuration template for experiments
+
+model_name: "llama_3_1_8b"     
+api_key: "your-api-key"
+device: "auto"
+
+synthetic_data_path: "data/synthetic.json"
+save_dir: "outputs/steering_vectors"
+
+experiment:
+  template_type: "templates"          # regular | irregular | both
+  color_type: "fundamental_colors"      # fundamental_colors | hue_wheel_colors | all
+  activation_pool: "mean"        # mean | last

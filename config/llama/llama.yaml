@@ -1,0 +1,7 @@
+model_name: "llama_3_1_8B"
+api_key: "your-api-key"
+device: "auto"
+
+synthetic_data_path: "data/synthetic.json"
+save_dir: "outputs/llama/both_all_last"
+
