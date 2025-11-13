@@ -26,6 +26,7 @@ class DiffInMeansExp:
 
         print(f"[INFO] Starting Diff-in-Means computation for {len(contrastive_pairs)} colors")
 
+
         results = self.get_vectors.get_and_save(
             model=self.model,
             contrastive_pairs=contrastive_pairs,

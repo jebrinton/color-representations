@@ -21,6 +21,8 @@ class DiffInMeansCompute:
 
         for color, samples in tqdm(contrastive_pairs.items(), desc=f"Computing {template_type}/{color_type}"):
 
+            
+
             pos_sents = samples["positive"]
             neg_sents = samples["negative"]
 
