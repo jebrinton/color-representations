@@ -21,10 +21,20 @@ class Llama3_1_8B(BaseModel):
 
         activations = {}
         with self.model.trace(text):
+            out = self.model.output.save()
             for name, module in self.model.model.named_modules():
                 # print(name)
                 if len(list(module.children())) == 0 and not any(term in name for term in ignore):
                     tensor = module.output[0]
                     activations[name] = tensor.detach().clone().cpu()
-        return activations
+        
+        # decode next-token text output
+        logits = out["logits"]                     # [1, seq_len, vocab]
+        final_logits = logits[0, -1]               # last step
+        token_id = final_logits.argmax().item()
+        output_text = self.model.tokenizer.decode(token_id).strip()
+
+        return activations, output_text
+    
+
 

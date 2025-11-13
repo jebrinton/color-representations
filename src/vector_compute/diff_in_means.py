@@ -2,6 +2,7 @@ import torch
 from pathlib import Path
 import json
 from tqdm import tqdm
+from collections import defaultdict
 
 
 class DiffInMeansCompute:
@@ -51,17 +52,15 @@ class DiffInMeansCompute:
 
         pos_acts, neg_acts = {}, {}
 
-
-
         for text in tqdm(pos_sents, desc="Positive", leave=False):
-            acts = model.get_hidden_activations(text)
+            acts,_ = model.get_hidden_activations(text)
             for name, tensor in acts.items():
                 tensor = self._pool_activation(tensor, activation_pool)
                 pos_acts.setdefault(name, []).append(tensor)
 
         
         for text in tqdm(neg_sents, desc="Negative", leave=False):
-            acts = model.get_hidden_activations(text)
+            acts,_ = model.get_hidden_activations(text)
             for name, tensor in acts.items():
                 tensor = self._pool_activation(tensor, activation_pool)
                 neg_acts.setdefault(name, []).append(tensor)
@@ -74,6 +73,19 @@ class DiffInMeansCompute:
 
         return layer_vecs
 
+    def _compute_for_predictions(self, self, model, sents, activation_pool="mean"):
+        color_acts = {}
+        for text in tqdm(sents, desc="All prompts", leave=False):
+            acts, output_text = model.get_hidden_activations(text)
+            prompt_acts = {}
+            for name, tensor in acts.items():
+                tensor = self._pool_activation(tensor, activation_pool)
+                prompt_acts.setdefault(name, []).append(tensor)
+            
+            color_acts.setdefault(output_text, []).append(prompt_acts)
+        
+        return color_acts
+    
 
     @staticmethod
     def _pool_activation(tensor: torch.Tensor, mode: str = "mean") -> torch.Tensor:
@@ -86,3 +98,5 @@ class DiffInMeansCompute:
             return tensor[-1]
         else:
             raise ValueError(f"Invalid activation_pool mode: {mode}")
+
+

@@ -31,6 +31,8 @@ class Config:
     @property
     def synthetic_data_path(self): return self.cfg["synthetic_data_path"]
     @property
+    def common_objects_path(self): return self.cfg["common_objects_path"]
+    @property
     def save_dir(self): return self.cfg.get("save_dir", "outputs")
 
     def get_experiment(self):
