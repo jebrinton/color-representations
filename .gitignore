@@ -1,2 +1,7 @@
 data/
-steering_vectors/
+outputs/
+notebooks/
+__pycache__
+config.yaml
+color_rep.e*
+color_rep.o*
