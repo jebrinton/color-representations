@@ -1,6 +1,6 @@
 data/
 outputs/
-*/notebooks/
+notebooks/
 __pycache__
 config.yaml
 color_rep.e*

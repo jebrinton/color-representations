@@ -11,6 +11,40 @@ class DiffInMeansCompute:
         self.vector_manager = vector_manager
         self.save_dir = Path(save_dir)
         self.save_dir.mkdir(parents=True, exist_ok=True)
+    
+    def get_and_save_predictions(self, model, sents, template_type, color_type, activation_pool="mean"):
+
+        # Directory structure: outputs/steering_vectors/<template_type>/<color_type>/
+        root_dir = self.save_dir / template_type / color_type
+        root_dir.mkdir(parents=True, exist_ok=True)
+
+        print(f"[INFO] Predicting colors for {len(sents)} prompts...")
+
+        # Compute the steering vectors from predictions
+        steering_vecs = self._compute_for_predictions(model, sents, activation_pool)
+
+        index = {}
+
+        # Save vectors for each predicted color
+        for color_name, layer_dict in steering_vecs.items():
+            color_dir = root_dir / color_name
+            color_dir.mkdir(parents=True, exist_ok=True)
+
+            index[color_name] = {}
+
+            for layer_name, vec in layer_dict.items():
+                file_path = color_dir / f"{layer_name.replace('/', '_')}.pt"
+                torch.save(vec, file_path)
+                index[color_name][layer_name] = str(file_path.resolve())
+
+        # Save index.json
+        index_path = root_dir / "index.json"
+        with open(index_path, "w") as f:
+            json.dump(index, f, indent=2)
+
+        print(f"[INFO] Saved predicted steering vectors to: {root_dir.resolve()}")
+        return index
+
 
     def get_and_save(self, model, contrastive_pairs, template_type, color_type, activation_pool="mean"):
 
@@ -71,18 +105,49 @@ class DiffInMeansCompute:
 
         return layer_vecs
 
-    def _compute_for_predictions(self, self, model, sents, activation_pool="mean"):
+    def _compute_for_predictions(self, model, sents, activation_pool="mean"):
         color_acts = {}
+
+        
         for text in tqdm(sents, desc="All prompts", leave=False):
             acts, output_text = model.get_hidden_activations(text)
             prompt_acts = {}
+
             for name, tensor in acts.items():
                 tensor = self._pool_activation(tensor, activation_pool)
                 prompt_acts.setdefault(name, []).append(tensor)
-            
+
             color_acts.setdefault(output_text, []).append(prompt_acts)
-        
-        return color_acts
+
+        steering_vecs = {}
+        all_colors = list(color_acts.keys())
+
+        print(all_colors)
+
+        for target_color in all_colors:
+            
+            layer_vecs = {}
+            pos_examples = color_acts[target_color]
+            neg_examples = [
+                ex for color, exs in color_acts.items()
+                if color != target_color
+                for ex in exs
+            ]
+            if len(pos_examples) == 0 or len(neg_examples) == 0:
+                continue 
+
+            for layer_name in pos_examples[0].keys():
+                pos_tensor = torch.stack([ex[layer_name][0] for ex in pos_examples])
+                neg_tensor = torch.stack([ex[layer_name][0] for ex in neg_examples])
+
+                layer_vecs[layer_name] = self.vector_manager.diff_in_means(
+                    pos_tensor, neg_tensor
+                )
+
+            steering_vecs[target_color] = layer_vecs
+
+        return steering_vecs
+
     
 
     @staticmethod

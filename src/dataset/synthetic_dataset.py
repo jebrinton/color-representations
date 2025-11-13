@@ -42,7 +42,7 @@ class CommonObjects(Dataset):
     def get_all_common_objects(self):
         # print(self.data["objects"])
         data = [
-            f"What do you think the color of {i} is? Answer with only one color. Do not give any explanation."
+            f"Answer in one word. What is the color of {i}?"
             for i in self.data.keys()
         ]
 

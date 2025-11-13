@@ -22,18 +22,39 @@ class Config:
     def get(self, key, default=None):
         return self.cfg.get(key, default)
 
+    # -------------------------
+    # Standard fields
+    # -------------------------
     @property
-    def model_name(self): return self.cfg["model_name"]
-    @property
-    def api_key(self): return self.cfg["api_key"]
-    @property
-    def device(self): return self.cfg.get("device", "auto")
-    @property
-    def synthetic_data_path(self): return self.cfg["synthetic_data_path"]
-    @property
-    def common_objects_path(self): return self.cfg["common_objects_path"]
-    @property
-    def save_dir(self): return self.cfg.get("save_dir", "outputs")
+    def model_name(self):
+        return self.cfg["model_name"]
 
+    @property
+    def api_key(self):
+        return self.cfg["api_key"]
+
+    @property
+    def device(self):
+        return self.cfg.get("device", "auto")
+
+    @property
+    def save_dir(self):
+        return self.cfg.get("save_dir", "outputs")
+
+    # -------------------------
+    # Dataset config block
+    # -------------------------
+    def get_dataset_config(self):
+        """
+        Returns dataset configuration block:
+            dataset:
+                type: synthetic
+                path: data/synthetic.json
+        """
+        return self.cfg.get("dataset", {})
+
+    # -------------------------
+    # Experiment parameters
+    # -------------------------
     def get_experiment(self):
         return self.cfg.get("experiment", {})
