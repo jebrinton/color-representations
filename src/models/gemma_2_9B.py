@@ -15,10 +15,25 @@ class Gemma2_9B(BaseModel):
         return self
 
     def get_hidden_activations(self, text: str):
-        ignore = ["act_fn", "input_layernorm", "post_attention_layernorm"]
-        activations = {}
-        with self.model.trace(text):
-            for name, module in self.model.model.named_modules():
-                if len(list(module.children())) == 0 and not any(term in name for term in ignore):
-                    activations[name] = module.output[0]
-        return activations
+            # I dont know why this is happening, these layers are not associated with outout so cant get activations. 
+            # Need to look more but just adding a bandaid for now. 
+            ignore = ["act_fn", "input_layernorm", "post_attention_layernorm", "rotary_emb", "pre_feedforward_layernorm"] 
+
+            activations = {}
+            with self.model.trace(text):
+                
+                for name, module in self.model.model.named_modules():
+                    # print(name)
+                    if len(list(module.children())) == 0 and not any(term in name for term in ignore):
+                        tensor = module.output[0]
+                        activations[name] = tensor.detach().clone().cpu()
+                
+                out = self.model.lm_head.output.argmax(dim=-1).save()
+                print(text, out)
+
+
+            output_text = self.model.tokenizer.decode(out[0])
+
+            print(output_text)
+
+            return activations, output_text

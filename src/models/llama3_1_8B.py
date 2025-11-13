@@ -11,7 +11,7 @@ class Llama3_1_8B(BaseModel):
         self.model = None
 
     def load(self):
-        self.model = LanguageModel("meta-llama/Meta-Llama-3.1-8B", device_map=self.device)
+        self.model = LanguageModel("meta-llama/Llama-3.1-8B-Instruct", device_map=self.device)
         return self
 
     def get_hidden_activations(self, text: str):
@@ -21,10 +21,22 @@ class Llama3_1_8B(BaseModel):
 
         activations = {}
         with self.model.trace(text):
+            
             for name, module in self.model.model.named_modules():
                 # print(name)
                 if len(list(module.children())) == 0 and not any(term in name for term in ignore):
                     tensor = module.output[0]
                     activations[name] = tensor.detach().clone().cpu()
-        return activations
+            
+            out = self.model.lm_head.output.argmax(dim=-1).save()
+            # print(text, out)
+
+
+        output_text = self.model.tokenizer.decode(out[0][-1])
+
+        # print(output_text)
+
+        return activations, output_text
+    
+
 

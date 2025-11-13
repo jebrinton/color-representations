@@ -34,3 +34,20 @@ class SyntheticDataset(Dataset):
         return contrastive_data
 
         
+class CommonObjects(Dataset):
+    def __init__(self, path: str):
+        with open(path, "r") as f:
+            self.data = json.load(f)
+    
+    def get_all_common_objects(self):
+        # print(self.data["objects"])
+        data = [
+            f"Answer in one word. What is the color of {i}?"
+            for i in self.data.keys()
+        ]
+
+        return data
+
+
+# x = CommonObjects("/projectnb/cs599m1/projects/color-rep/color-representations/data/common_objects.json")
+# print(x.get_all_common_objects()[:1])
