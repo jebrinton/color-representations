@@ -1,6 +1,2 @@
 data/
-outputs/
-__pycache__
-config.yaml
-color_rep.e*
-color_rep.o*
+steering_vectors/
