@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "colorrep"
+version = "0.1.0"
+authors = [
+  { name="Jacob Brinton", email="jbrin@bu.edu" },
+]
+description = "Color representations steering vectors utilities"
+
+[tool.setuptools.packages.find]
+where = ["src"]
