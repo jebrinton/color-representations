@@ -3,5 +3,6 @@ outputs/
 notebooks/
 __pycache__
 config.yaml
+config_.yaml
 color_rep.e*
 color_rep.o*

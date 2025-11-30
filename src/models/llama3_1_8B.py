@@ -15,22 +15,14 @@ class Llama3_1_8B(BaseModel):
         return self
 
     def get_hidden_activations(self, text: str):
-        # I dont know why this is happening, these layers are not associated with outout so cant get activations. 
-        # Need to look more but just adding a bandaid for now. 
-        ignore = ["act_fn", "input_layernorm", "post_attention_layernorm", "rotary_emb"] 
-
         activations = {}
         with self.model.trace(text):
-            
-            for name, module in self.model.model.named_modules():
-                # print(name)
-                if len(list(module.children())) == 0 and not any(term in name for term in ignore):
-                    tensor = module.output[0]
-                    activations[name] = tensor.detach().clone().cpu()
+            for i, layer in enumerate(self.model.model.layers):
+                activations[str(i)] = layer.output.detach().clone().cpu()
             
             out = self.model.lm_head.output.argmax(dim=-1).save()
             # print(text, out)
-
+        # print(activations.keys())
 
         output_text = self.model.tokenizer.decode(out[0][-1])
 

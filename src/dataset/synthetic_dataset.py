@@ -32,6 +32,19 @@ class SyntheticDataset(Dataset):
             
 
         return contrastive_data
+    
+    def get_color_sentences(self, template_type, color_type):
+        output = {}
+        for color in self.data[color_type]:
+            output[color] = []
+            for template in self.data[template_type]:
+                for object_ in self.data["objects"]:
+                    for number in self.data["numbers"]:
+                        sent = template.format(object=object_, color=color, number=number)
+                        output[color].append(sent)
+            # output[color] = output[color]
+        
+        return output
 
         
 class CommonObjects(Dataset):
