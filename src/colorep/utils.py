@@ -48,8 +48,7 @@ def setup_model(model_id):
     device, dtype = get_device_info()
 
     # Load language model
-    model = LanguageModel(model_id, torch_dtype=dtype, device_map="auto")
-    submodule = model.model.layers[16]
+    model = LanguageModel(model_id, torch_dtype=dtype, device_map=device)
 
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
@@ -58,7 +57,7 @@ def setup_model(model_id):
     )
     tokenizer.pad_token = tokenizer.eos_token
 
-    return model, submodule, tokenizer
+    return model, tokenizer
 
 
 def save_json(data, filepath):
