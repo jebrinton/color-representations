@@ -4,5 +4,6 @@ notebooks/
 __pycache__
 config.yaml
 config_.yaml
+*.yaml
 color_rep.e*
 color_rep.o*
