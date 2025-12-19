@@ -58,3 +58,39 @@ class Config:
     # -------------------------
     def get_experiment(self):
         return self.cfg.get("experiment", {})
+
+FUNDAMENTAL_COLORS = [
+    " Black",
+    " Blue",
+    " Brown",
+    " Gold",
+    " Golden",
+    " Gray",
+    " Green",
+    " Grey",
+    " Orange",
+    " Pink",
+    " Purple",
+    " Red",
+    " Silver",
+    " White",
+    " Yellow",
+]
+
+COLORS_TO_HEX = {
+    " Black": "#000000",
+    " Blue": "#0000ff",
+    " Brown": "#a52a2a",
+    " Gold": "#ffd700",
+    " Golden": "#ffd700",
+    " Gray": "#808080",
+    " Green": "#00ff00",
+    " Grey": "#808080",
+    " Orange": "#ffa500",
+    " Pink": "#ffc0cb",
+    " Purple": "#800080",
+    " Red": "#ff0000",
+    " Silver": "#c0c0c0",
+    " White": "#ffffff",
+    " Yellow": "#c0c000",
+}

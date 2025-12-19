@@ -2,6 +2,7 @@ README.md
 pyproject.toml
 src/colorrep/__init__.py
 src/colorrep/config.py
+src/colorrep/get_steering_vectors_jb.py
 src/colorrep/steering_vector_utils.py
 src/colorrep/utils.py
 src/colorrep.egg-info/PKG-INFO

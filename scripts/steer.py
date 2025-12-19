@@ -10,6 +10,8 @@ from tqdm import tqdm
 
 from nnsight import LanguageModel
 
+from colorrep.steering_vector_utils import load_steering_vector
+
 TRACER_KWARGS = {'scan': False, 'validate': False}
 
 def save_steering_results(
@@ -109,28 +111,6 @@ def make_prompts(objects: list[str]) -> list[str]:
         """)
     return prompts
 
-def load_steering_vector(sv_dir: str, color: str, layer_num: int) -> torch.Tensor:
-    """
-    Loads a steering vector from a specific file path.
-
-    Args:
-        sv_dir: The base directory for steering vectors.
-        color: The color of the steering vector (e.g., "Red").
-        layer_num: The layer number of the steering vector.
-
-    Returns:
-        The loaded steering vector as a torch.Tensor.
-    """
-    # Construct the full file path
-    file_path = os.path.join(sv_dir, color, f"{layer_num}.pt")
-    
-    try:
-        steering_vector = torch.load(file_path, map_location=torch.device('cuda'), weights_only=True)
-        return steering_vector
-    except Exception as e:
-        print(f"Error loading file {file_path}: {e}")
-        return None
-
 
 def steer_model_logits(model, prompt, steering_vector, layer_num, alpha, token_positions=[-1]):
     # TODO: change prompt to be a dataloader
@@ -180,6 +160,7 @@ def steer_model_logits(model, prompt, steering_vector, layer_num, alpha, token_p
         print(f"{i+1}. Token ID {token_id.item()}: '{token_text}' | Change: -{diff.item():.4f}")
     
     return logits_intervened, logits_clean
+
 
 def steer_generate(model, prompts, layer_num, steering_vector, alpha, steering_vector_2=None, beta=None):
     # padding on left in case you batch this in the future (so that -1 is still the last token)
