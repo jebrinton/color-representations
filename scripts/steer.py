@@ -167,11 +167,15 @@ def steer_generate(model, prompts, layer_num, steering_vector, alpha, steering_v
     input_ids = model.tokenizer(prompts, return_tensors="pt", padding=True, padding_side="left")["input_ids"] # {input_ids: [batch_size (1), seq_len], attention_mask: [batch_size (1), seq_len]}
     input_len = input_ids.shape[1]
 
+    steering_vector = steering_vector.to(model.device)
+    if steering_vector_2 is not None and beta is not None:
+        steering_vector_2 = steering_vector_2.to(model.device)
+
     with model.generate(input_ids, max_new_tokens=7, pad_token_id=model.tokenizer.eos_token_id) as tracer:
         hidden = model.model.layers[layer_num].output.save() # {batch_idx: [seq_len, hidden_size]}
         hidden[:, :] += alpha * steering_vector
         if steering_vector_2 is not None and beta is not None:
-            hidden[-10:-5, :] += beta * steering_vector_2
+            hidden[:, :] += beta * steering_vector_2
         generation = model.generator.output.save() # [batch_size, generated_seq_len]
 
     hex_codes = []
@@ -192,7 +196,7 @@ def main():
     model.generation_config.pad_token_id = model.tokenizer.eos_token_id
     layer_num = 31
 
-    objects = ["fresh milk", "white", "glass", "an apple", "BLORGARs", "an emotion", "a sunset"]
+    objects = ["fresh milk", "jelly beans", "the sea", "an apple", "BLORGARs", "an emotion", "a sunset"]
     prompts = make_prompts(objects)
 
     min_alpha = -0.6
@@ -220,6 +224,8 @@ def main():
     for sv_color_1, sv_color_2 in tqdm(itertools.combinations(sv_colors, 2), desc="SV pairs", position=0, colour="green"):
         sv_1 = load_steering_vector(sv_dir, sv_color_1, layer_num)
         sv_2 = load_steering_vector(sv_dir, sv_color_2, layer_num)
+        sv_1.to(model.device)
+        sv_2.to(model.device)
         
         for alpha_idx, alpha in tqdm(enumerate(alpha_values), desc="Alpha values", leave=False, position=1, colour="blue"):
             for beta_idx, beta in tqdm(enumerate(beta_values), desc="Beta values", leave=False, position=2, colour="yellow"):

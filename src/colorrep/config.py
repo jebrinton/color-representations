@@ -59,7 +59,7 @@ class Config:
     def get_experiment(self):
         return self.cfg.get("experiment", {})
 
-FUNDAMENTAL_COLORS = [
+INDIRECT_COLORS = [
     " Black",
     " Blue",
     " Brown",
@@ -75,6 +75,33 @@ FUNDAMENTAL_COLORS = [
     " Silver",
     " White",
     " Yellow",
+]
+
+DIRECT_COLORS = [
+    "beige",
+    "black",
+    "blue",
+    "brown",
+    "coral",
+    "cyan",
+    "gold",
+    "gray",
+    "green",
+    "lime",
+    "magenta",
+    "maroon",
+    "navy",
+    "olive",
+    "orange",
+    "pink",
+    "purple",
+    "red",
+    "silver",
+    "teal",
+    "turquoise",
+    "violet",
+    "white",
+    "yellow",
 ]
 
 COLORS_TO_HEX = {
@@ -93,4 +120,28 @@ COLORS_TO_HEX = {
     " Silver": "#c0c0c0",
     " White": "#ffffff",
     " Yellow": "#c0c000",
+    "beige": "#f5f5dc",
+    "black": "#000000",
+    "blue": "#0000ff",
+    "brown": "#a52a2a",
+    "coral": "#ff7f50",
+    "cyan": "#00ffff",
+    "gold": "#ffd700",
+    "gray": "#808080",
+    "green": "#00ff00",
+    "lime": "#00ff00",
+    "magenta": "#ff00ff",
+    "maroon": "#800000",
+    "navy": "#000080",
+    "olive": "#808000",
+    "orange": "#ffa500",
+    "pink": "#ffc0cb",
+    "purple": "#800080",
+    "red": "#ff0000",
+    "silver": "#c0c0c0",
+    "teal": "#008080",
+    "turquoise": "#40e0d0",
+    "violet": "#800080",
+    "white": "#ffffff",
+    "yellow": "#c0c000",
 }
